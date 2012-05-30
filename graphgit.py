@@ -38,7 +38,7 @@ def main():
         print "Error: invalid repository path."
         sys.exit(0)
 
-    for head in repo.heads:
+    for head in repo.heads + sum([remote.refs for remote in repo.remotes], []):
         process_commit(head.commit)
         G.add_node(head.name, shape='box',
                 color=name_to_int(head.commit.author.name))
