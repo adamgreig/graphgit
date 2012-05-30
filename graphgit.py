@@ -2,9 +2,11 @@ import git
 import pygraphviz
 import sys
 import hashlib
+import os.path
 
 G = pygraphviz.AGraph(strict=False, directed=True)
 G.graph_attr['rankdir'] = 'RL'
+G.graph_attr['overlap'] = 'false'
 G.node_attr['colorscheme'] = 'set19'
 G.edge_attr['colorscheme'] = 'set19'
 G.edge_attr['dir'] = 'back'
@@ -32,8 +34,17 @@ def main():
     if len(sys.argv) == 1:
         print "Usage: {0} <path to git repo>".format(sys.argv[0])
         sys.exit(0)
+
+    path = sys.argv[1]
+
+    if path[-1] == '/':
+        path = path[:-1]
+
+    title = os.path.basename(path)
+    G.graph_attr['label'] = title
+
     try:    
-        repo = git.Repo(sys.argv[1])
+        repo = git.Repo(path)
     except git.exc.NoSuchPathError:
         print "Error: invalid repository path."
         sys.exit(0)
@@ -47,7 +58,11 @@ def main():
     for name in names:
         G.add_node(name, color=name_to_int(name))
 
-    print G
+    with open(title + ".dot", "w") as f:
+        f.write(str(G))
+
+    G.layout()
+    G.draw(title + ".png")
 
 if __name__ == "__main__":
     main()
