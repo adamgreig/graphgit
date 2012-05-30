@@ -4,6 +4,7 @@ import sys
 import hashlib
 
 G = pygraphviz.AGraph(strict=False, directed=True)
+G.graph_attr['rankdir'] = 'RL'
 G.node_attr['colorscheme'] = 'set19'
 G.edge_attr['colorscheme'] = 'set19'
 G.edge_attr['dir'] = 'back'
